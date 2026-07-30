@@ -355,13 +355,13 @@ body {
   width: 100%;
   border-collapse: collapse;
   border: 2px solid var(--table-border);
-  font-size: 0.88rem;
+  font-size: 1rem;
 }
 
 .bill-table th,
 .bill-table td {
   border: 1px solid var(--table-border);
-  padding: 0.45rem 0.5rem;
+  padding: 0.65rem 0.75rem;
   vertical-align: middle;
 }
 
@@ -370,40 +370,42 @@ body {
   color: #0f172a;
   font-weight: 800;
   text-transform: uppercase;
-  font-size: 0.8rem;
-  letter-spacing: 0.03em;
+  font-size: 0.95rem;
+  letter-spacing: 0.04em;
   text-align: center;
+  padding: 0.7rem 0.6rem;
 }
 
 /* Column Width Adjustments */
 .col-sl {
-  width: 55px;
+  width: 60px;
   text-align: center;
-  font-weight: 600;
+  font-weight: 700;
+  font-size: 1rem;
 }
 
 .col-particulars {
-  min-width: 220px;
+  min-width: 250px;
 }
 
 .col-cash {
-  width: 100px;
+  width: 110px;
 }
 
 .col-upi {
-  width: 100px;
+  width: 110px;
 }
 
 .col-amount {
-  width: 130px;
+  width: 145px;
 }
 
 .col-remarks {
-  min-width: 120px;
+  min-width: 140px;
 }
 
 .col-actions {
-  width: 65px;
+  width: 70px;
   text-align: center;
 }
 
@@ -411,12 +413,13 @@ body {
 .table-input {
   width: 100%;
   font-family: inherit;
-  font-size: 0.88rem;
+  font-size: 1rem;
+  font-weight: 500;
   color: #000000;
   border: 1px solid transparent;
   background: transparent;
-  padding: 4px 6px;
-  border-radius: 2px;
+  padding: 6px 8px;
+  border-radius: 3px;
   outline: none;
 }
 
@@ -437,20 +440,24 @@ body {
 .bold-amount {
   font-weight: 700;
   color: #000000;
+  font-size: 1.02rem;
 }
 
 /* Table Footer / Summary Rows */
 .row-summary td {
   background: #fafafa;
+  padding: 0.65rem 0.75rem;
 }
 
 .summary-title {
   font-weight: 700;
   color: #1e293b;
+  font-size: 1rem;
 }
 
 .bold-title {
-  font-size: 0.95rem;
+  font-size: 1.08rem;
+  font-weight: 800;
   text-transform: uppercase;
   color: var(--primary-color);
 }
@@ -460,7 +467,7 @@ body {
 }
 
 .final-total-amount {
-  font-size: 1.1rem;
+  font-size: 1.25rem;
   font-weight: 800;
   color: var(--primary-color);
 }
@@ -471,25 +478,25 @@ body {
 .amount-in-words-box {
   background: #f8fafc;
   border: 1.5px solid var(--table-border);
-  padding: 0.75rem 1rem;
+  padding: 0.85rem 1.1rem;
   margin-bottom: 2rem;
   display: flex;
   align-items: baseline;
-  gap: 0.5rem;
+  gap: 0.6rem;
   flex-wrap: wrap;
 }
 
 .words-label {
   font-weight: 800;
   color: #0f172a;
-  font-size: 0.9rem;
+  font-size: 0.98rem;
   text-transform: uppercase;
 }
 
 .words-value {
   font-weight: 700;
   color: var(--primary-color);
-  font-size: 0.95rem;
+  font-size: 1.05rem;
   font-style: italic;
 }
 
