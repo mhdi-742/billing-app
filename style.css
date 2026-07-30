@@ -1,0 +1,681 @@
+/* ==========================================================================
+   MIKKY MEGHA HOSPITAL - BILLING APP STYLESHEET
+   Color Theme derived from logo.png:
+   - Primary Deep Navy Blue: #0f3460 / #16425b
+   - Accent Crimson Red:    #c82333 / #a81c2a
+   - Cyan Accent:           #0096c7 / #0077b6
+   - Light Clean Background: #f4f7f6
+   ========================================================================== */
+
+:root {
+  --primary-color: #0f3460;
+  --primary-hover: #0a2547;
+  --secondary-color: #16425b;
+  --accent-red: #c82333;
+  --accent-red-hover: #b21f2d;
+  --accent-cyan: #0096c7;
+  --bg-gradient: linear-gradient(135deg, #eef2f7 0%, #e4e9f0 100%);
+  --paper-bg: #ffffff;
+  --text-main: #1f2937;
+  --text-muted: #6b7280;
+  --border-dark: #222222;
+  --border-light: #d1d5db;
+  --table-border: #333333;
+  --radius-sm: 4px;
+  --radius-md: 8px;
+  --shadow-card: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.05);
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  background: var(--bg-gradient);
+  color: var(--text-main);
+  min-height: 100vh;
+  line-height: 1.5;
+}
+
+/* ==========================================================================
+   App Header & Control Bar (Screen view)
+   ========================================================================== */
+.app-header {
+  background: #ffffff;
+  border-bottom: 3px solid var(--primary-color);
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  padding: 0.75rem 1.5rem;
+}
+
+.header-container {
+  max-width: 1100px;
+  margin: 0 auto;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.brand-logo {
+  height: 48px;
+  width: auto;
+  object-fit: contain;
+}
+
+.brand h1 {
+  font-size: 1.25rem;
+  font-weight: 800;
+  color: var(--primary-color);
+  letter-spacing: -0.02em;
+}
+
+.brand p {
+  font-size: 0.75rem;
+  color: var(--accent-red);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.header-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+/* Buttons */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.5rem 0.9rem;
+  font-size: 0.85rem;
+  font-weight: 600;
+  border-radius: var(--radius-md);
+  border: 1px solid transparent;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  white-space: nowrap;
+}
+
+.btn-primary {
+  background: var(--primary-color);
+  color: #ffffff;
+}
+
+.btn-primary:hover {
+  background: var(--primary-hover);
+  transform: translateY(-1px);
+}
+
+.btn-secondary {
+  background: var(--accent-cyan);
+  color: #ffffff;
+}
+
+.btn-secondary:hover {
+  background: #0077b6;
+}
+
+.btn-outline {
+  background: #ffffff;
+  border-color: var(--primary-color);
+  color: var(--primary-color);
+}
+
+.btn-outline:hover {
+  background: #f0f4f8;
+}
+
+.btn-danger-outline {
+  background: #ffffff;
+  border-color: var(--accent-red);
+  color: var(--accent-red);
+}
+
+.btn-danger-outline:hover {
+  background: #fff5f5;
+}
+
+.btn-icon-danger {
+  background: transparent;
+  color: var(--accent-red);
+  border: none;
+  padding: 4px 6px;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.btn-icon-danger:hover {
+  background: #ffe3e3;
+}
+
+/* ==========================================================================
+   Main Container & Bill Paper Frame
+   ========================================================================== */
+.main-container {
+  max-width: 1000px;
+  margin: 1.5rem auto;
+  padding: 0 1rem 3rem 1rem;
+}
+
+/* Outer Bill Container styled to mimic the reference image outline */
+.bill-paper {
+  background: var(--paper-bg);
+  border: 4px double var(--table-border);
+  box-shadow: var(--shadow-card);
+  padding: 2.2rem;
+  margin: 0 auto;
+  border-radius: 2px;
+  position: relative;
+}
+
+/* Header Section inside Bill */
+.bill-header {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  gap: 0.4rem;
+  padding-bottom: 0.8rem;
+  margin-bottom: 0.6rem;
+  border-bottom: 2px solid var(--primary-color);
+}
+
+.header-logo-wrapper {
+  margin-bottom: 0.1rem;
+}
+
+.bill-logo {
+  height: 85px;
+  width: auto;
+  object-fit: contain;
+}
+
+.header-details-wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 0.2rem;
+}
+
+.hospital-name {
+  font-size: 1.7rem;
+  font-weight: 800;
+  color: var(--primary-color);
+  letter-spacing: -0.01em;
+  line-height: 1.2;
+}
+
+.hospital-address {
+  font-size: 0.88rem;
+  font-weight: 600;
+  color: #222222;
+  line-height: 1.3;
+}
+
+.hospital-contact {
+  font-size: 0.85rem;
+  font-weight: 500;
+  color: #222222;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.6rem;
+  flex-wrap: wrap;
+}
+
+.contact-divider {
+  color: #888888;
+  font-weight: 300;
+}
+
+.hospital-website {
+  font-size: 0.85rem;
+  font-weight: 500;
+  color: var(--primary-color);
+}
+
+.bill-badge-container {
+  text-align: center;
+  margin-bottom: 1.2rem;
+}
+
+.bill-title-badge {
+  font-family: 'Cinzel', serif, sans-serif;
+  font-size: 1.2rem;
+  font-weight: 800;
+  color: var(--primary-color);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  border-bottom: 2px solid var(--primary-color);
+  padding-bottom: 2px;
+}
+
+/* ==========================================================================
+   Patient Information Grid & Fields
+   ========================================================================== */
+.patient-info-box {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+  margin-bottom: 1.2rem;
+}
+
+.info-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.2rem;
+}
+
+/* Custom Proportions for Long Names */
+.row-patient-name {
+  grid-template-columns: 2.6fr 1fr;
+}
+
+.row-contact-id {
+  grid-template-columns: 4.2fr 1.8fr;
+}
+
+.row-dr-stay {
+  grid-template-columns: 2.2fr 1fr;
+}
+
+.info-field {
+  display: flex;
+  align-items: baseline;
+  gap: 0.5rem;
+  font-size: 0.95rem;
+  min-width: 0;
+}
+
+.info-label {
+  font-weight: 700;
+  color: #111111;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.info-input {
+  flex-grow: 1;
+  font-family: inherit;
+  font-size: 0.95rem;
+  font-weight: 500;
+  color: #000000;
+  border: none;
+  border-bottom: 1px dotted #888888;
+  background: transparent;
+  padding: 2px 4px;
+  outline: none;
+  transition: border-color 0.2s;
+  min-width: 50px;
+}
+
+.info-input:focus {
+  border-bottom: 2px solid var(--primary-color);
+  background: #f8fafc;
+}
+
+.input-bold {
+  font-weight: 700;
+  text-transform: uppercase;
+  color: var(--primary-color);
+}
+
+/* Special width handling for long patient names */
+.field-patient-name {
+  grid-column: span 1;
+}
+
+/* ==========================================================================
+   Bill Table Styling
+   ========================================================================== */
+.table-responsive {
+  overflow-x: auto;
+  margin-bottom: 1.2rem;
+}
+
+.bill-table {
+  width: 100%;
+  border-collapse: collapse;
+  border: 2px solid var(--table-border);
+  font-size: 0.88rem;
+}
+
+.bill-table th,
+.bill-table td {
+  border: 1px solid var(--table-border);
+  padding: 0.45rem 0.5rem;
+  vertical-align: middle;
+}
+
+.bill-table th {
+  background: #f1f5f9;
+  color: #0f172a;
+  font-weight: 800;
+  text-transform: uppercase;
+  font-size: 0.8rem;
+  letter-spacing: 0.03em;
+  text-align: center;
+}
+
+/* Column Width Adjustments */
+.col-sl {
+  width: 55px;
+  text-align: center;
+  font-weight: 600;
+}
+
+.col-particulars {
+  min-width: 220px;
+}
+
+.col-cash {
+  width: 100px;
+}
+
+.col-upi {
+  width: 100px;
+}
+
+.col-amount {
+  width: 130px;
+}
+
+.col-remarks {
+  min-width: 120px;
+}
+
+.col-actions {
+  width: 65px;
+  text-align: center;
+}
+
+/* Table Inputs */
+.table-input {
+  width: 100%;
+  font-family: inherit;
+  font-size: 0.88rem;
+  color: #000000;
+  border: 1px solid transparent;
+  background: transparent;
+  padding: 4px 6px;
+  border-radius: 2px;
+  outline: none;
+}
+
+.table-input:focus,
+.table-input:hover {
+  border-color: #cbd5e1;
+  background: #f8fafc;
+}
+
+.table-input:focus {
+  border-color: var(--primary-color);
+}
+
+.text-right {
+  text-align: right;
+}
+
+.bold-amount {
+  font-weight: 700;
+  color: #000000;
+}
+
+/* Table Footer / Summary Rows */
+.row-summary td {
+  background: #fafafa;
+}
+
+.summary-title {
+  font-weight: 700;
+  color: #1e293b;
+}
+
+.bold-title {
+  font-size: 0.95rem;
+  text-transform: uppercase;
+  color: var(--primary-color);
+}
+
+.highlight-total {
+  background: #f0f4f8 !important;
+}
+
+.final-total-amount {
+  font-size: 1.1rem;
+  font-weight: 800;
+  color: var(--primary-color);
+}
+
+/* ==========================================================================
+   Amount in Words Section
+   ========================================================================== */
+.amount-in-words-box {
+  background: #f8fafc;
+  border: 1.5px solid var(--table-border);
+  padding: 0.75rem 1rem;
+  margin-bottom: 2rem;
+  display: flex;
+  align-items: baseline;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.words-label {
+  font-weight: 800;
+  color: #0f172a;
+  font-size: 0.9rem;
+  text-transform: uppercase;
+}
+
+.words-value {
+  font-weight: 700;
+  color: var(--primary-color);
+  font-size: 0.95rem;
+  font-style: italic;
+}
+
+/* ==========================================================================
+   Signatures Section
+   ========================================================================== */
+.signature-section {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  margin-top: 3.5rem;
+  padding: 0 1rem;
+}
+
+.signature-block {
+  width: 200px;
+}
+
+.signature-line {
+  border-top: 1.5px solid var(--table-border);
+  margin-bottom: 0.4rem;
+}
+
+.signature-label {
+  font-weight: 700;
+  font-size: 0.9rem;
+  color: #111111;
+}
+
+/* ==========================================================================
+   Media Query: PRINT STYLESHEET (Full A4 Paper Optimization)
+   ========================================================================== */
+@page {
+  size: A4 portrait;
+  margin: 4mm;
+}
+
+@media print {
+
+  html,
+  body {
+    margin: 0 !important;
+    padding: 0 !important;
+    background: #ffffff !important;
+    color: #000000 !important;
+    width: 100% !important;
+    height: 100% !important;
+    font-size: 11pt;
+  }
+
+  .no-print {
+    display: none !important;
+  }
+
+  .main-container {
+    max-width: 100% !important;
+    width: 100% !important;
+    margin: 0 !important;
+    padding: 0 !important;
+  }
+
+  .bill-paper {
+    display: flex !important;
+    flex-direction: column !important;
+    justify-content: space-between !important;
+    box-sizing: border-box !important;
+    width: 100% !important;
+    height: 98vh !important;
+    min-height: 98vh !important;
+    border: 3px double #000000 !important;
+    box-shadow: none !important;
+    padding: 8mm 10mm 6mm 10mm !important;
+    margin: 0 !important;
+    border-radius: 0 !important;
+    page-break-after: avoid;
+  }
+
+  .bill-header {
+    border-bottom: 2px solid #000000 !important;
+  }
+
+  .hospital-name {
+    color: #000000 !important;
+  }
+
+  .hospital-address,
+  .hospital-contact,
+  .hospital-website {
+    color: #000000 !important;
+  }
+
+  .bill-title-badge {
+    color: #000000 !important;
+    border-bottom-color: #000000 !important;
+  }
+
+  /* Hide all greyed out input placeholders when printing */
+  ::placeholder {
+    color: transparent !important;
+    opacity: 0 !important;
+  }
+
+  ::-webkit-input-placeholder {
+    color: transparent !important;
+    opacity: 0 !important;
+  }
+
+  ::-moz-placeholder {
+    color: transparent !important;
+    opacity: 0 !important;
+  }
+
+  :-ms-input-placeholder {
+    color: transparent !important;
+    opacity: 0 !important;
+  }
+
+  input::placeholder {
+    color: transparent !important;
+    opacity: 0 !important;
+  }
+
+  /* Flatten inputs into print text */
+  .info-input,
+  .table-input {
+    border: none !important;
+    background: transparent !important;
+    padding: 0 !important;
+  }
+
+  .info-input:focus,
+  .table-input:focus {
+    background: transparent !important;
+  }
+
+  .bill-table {
+    border: 1.5px solid #000000 !important;
+  }
+
+  .bill-table th,
+  .bill-table td {
+    border: 1px solid #000000 !important;
+    padding: 4px 6px !important;
+  }
+
+  .bill-table th {
+    background: #f0f0f0 !important;
+    color: #000000 !important;
+  }
+
+  .amount-in-words-box {
+    border: 1.5px solid #000000 !important;
+    background: #ffffff !important;
+  }
+
+  .words-value {
+    color: #000000 !important;
+  }
+
+  /* Signatures section always pinned at the bottom footer of printable page */
+  .signature-section {
+    margin-top: auto !important;
+    padding-top: 1.5rem !important;
+    margin-bottom: 2mm !important;
+  }
+
+  .signature-line {
+    border-top-color: #000000 !important;
+  }
+}
+
+/* Responsiveness on screens */
+@media (max-width: 640px) {
+  .info-row {
+    grid-template-columns: 1fr;
+    gap: 0.5rem;
+  }
+
+  .bill-header {
+    flex-direction: column;
+    text-align: center;
+  }
+
+  .signature-section {
+    flex-direction: column;
+    gap: 2rem;
+    align-items: center;
+  }
+}
