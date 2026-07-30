@@ -3,9 +3,9 @@
  * Global functions defined at top-level for 100% reliable execution.
  */
 
-// Initial Default Particulars (9 rows with clear default values)
+// Initial Default Particulars (Itemized charges)
 const DEFAULT_PARTICULARS = [
-  { name: "Advanced payment", cash: "", upi: "", amount: "", remarks: "" },
+  { name: "Package", cash: "", upi: "", amount: "", remarks: "" },
   { name: "Medicine Bill", cash: "", upi: "", amount: "", remarks: "" },
   { name: "Bed charge", cash: "", upi: "", amount: "", remarks: "" },
   { name: "Investigation Reports", cash: "", upi: "", amount: "", remarks: "" },
@@ -22,7 +22,11 @@ let particularsData = [];
  * Reset all form fields & particulars table
  */
 function resetForm() {
-  const fields = ["patientName", "ageSex", "contactNo", "patientId", "dateAdmission", "dateDischarge", "refDoctor", "stayDuration", "discountInput", "discountRemarks"];
+  const fields = [
+    "patientName", "ageSex", "contactNo", "patientId", 
+    "dateAdmission", "dateDischarge", "refDoctor", "stayDuration", 
+    "discountInput", "discountRemarks", "advanceInput", "advanceRemarks"
+  ];
   fields.forEach(id => {
     const el = document.getElementById(id);
     if (el) el.value = "";
@@ -109,20 +113,12 @@ function renderParticulars() {
     particularsTbody.appendChild(tr);
   });
 
-  // Update summary row SL numbers dynamically
-  const n = particularsData.length;
-  const slNet = document.getElementById("slNetAmount");
-  const slDisc = document.getElementById("slDiscount");
-  const slTot = document.getElementById("slTotal");
-  if (slNet) slNet.textContent = `${n + 1}.`;
-  if (slDisc) slDisc.textContent = `${n + 2}.`;
-  if (slTot) slTot.textContent = `${n + 3}.`;
-
   calculateTotals();
 }
 
 /**
  * Calculate totals and update amount in words
+ * Formula: Total Payable = Net Amount - Discount - Advance Payment
  */
 function calculateTotals() {
   let totalCash = 0;
@@ -130,14 +126,27 @@ function calculateTotals() {
   let netAmount = 0;
 
   particularsData.forEach(item => {
-    totalCash += parseFloat(item.cash) || 0;
-    totalUpi += parseFloat(item.upi) || 0;
-    netAmount += parseFloat(item.amount) || 0;
+    const c = parseFloat(item.cash) || 0;
+    const u = parseFloat(item.upi) || 0;
+    let amt = parseFloat(item.amount);
+    
+    if (isNaN(amt)) {
+      amt = c + u;
+    }
+
+    totalCash += c;
+    totalUpi += u;
+    netAmount += amt;
   });
 
   const discountInput = document.getElementById("discountInput");
+  const advanceInput = document.getElementById("advanceInput");
+
   const discount = parseFloat(discountInput ? discountInput.value : 0) || 0;
-  const grandTotal = Math.max(0, netAmount - discount);
+  const advance = parseFloat(advanceInput ? advanceInput.value : 0) || 0;
+
+  // Final Total = Net Amount - Discount - Advance Payment
+  const grandTotal = Math.max(0, netAmount - discount - advance);
 
   const totalCashDisplay = document.getElementById("totalCashDisplay");
   const totalUpiDisplay = document.getElementById("totalUpiDisplay");
@@ -158,13 +167,19 @@ function calculateTotals() {
  */
 function updateRowTotal(index, fromCashUpi = false) {
   const row = particularsData[index];
-  if (fromCashUpi && row) {
-    row.amount = (parseFloat(row.cash) || 0) + (parseFloat(row.upi) || 0);
-    const particularsTbody = document.getElementById("particularsTbody");
-    if (particularsTbody) {
-      const amountInput = particularsTbody.querySelector(`.input-amount[data-index="${index}"]`);
-      if (amountInput) {
-        amountInput.value = row.amount || "";
+  if (row) {
+    if (fromCashUpi) {
+      const c = parseFloat(row.cash) || 0;
+      const u = parseFloat(row.upi) || 0;
+      const totalVal = c + u;
+      row.amount = totalVal > 0 ? totalVal : "";
+      
+      const particularsTbody = document.getElementById("particularsTbody");
+      if (particularsTbody) {
+        const amountInput = particularsTbody.querySelector(`.input-amount[data-index="${index}"]`);
+        if (amountInput) {
+          amountInput.value = row.amount !== "" && row.amount !== undefined ? row.amount : "";
+        }
       }
     }
   }
@@ -299,6 +314,7 @@ function initApp() {
 
       if (e.target.classList.contains("input-name")) {
         particularsData[index].name = e.target.value;
+        updateRowTotal(index, false);
       } else if (e.target.classList.contains("input-cash")) {
         particularsData[index].cash = e.target.value;
         updateRowTotal(index, true);
@@ -307,7 +323,7 @@ function initApp() {
         updateRowTotal(index, true);
       } else if (e.target.classList.contains("input-amount")) {
         particularsData[index].amount = e.target.value;
-        calculateTotals();
+        updateRowTotal(index, false);
       } else if (e.target.classList.contains("input-remarks")) {
         particularsData[index].remarks = e.target.value;
       }
@@ -316,6 +332,9 @@ function initApp() {
 
   const discountInput = document.getElementById("discountInput");
   if (discountInput) discountInput.addEventListener("input", calculateTotals);
+
+  const advanceInput = document.getElementById("advanceInput");
+  if (advanceInput) advanceInput.addEventListener("input", calculateTotals);
 
   const dateAdmission = document.getElementById("dateAdmission");
   const dateDischarge = document.getElementById("dateDischarge");

@@ -443,6 +443,11 @@ body {
   font-size: 1.02rem;
 }
 
+.input-deduction {
+  color: var(--accent-red) !important;
+  font-weight: 700;
+}
+
 /* Table Footer / Summary Rows */
 .row-summary td {
   background: #fafafa;

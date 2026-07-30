@@ -10,8 +10,8 @@
   <link
     href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Cinzel:wght@700&display=swap"
     rel="stylesheet">
-  <link rel="stylesheet" href="style.css?v=7">
-  <script src="app.js?v=7" defer></script>
+  <link rel="stylesheet" href="style.css?v=10">
+  <script src="app.js?v=10" defer></script>
 </head>
 
 <body>
@@ -142,9 +142,9 @@
             <!-- Dynamic rows rendered by JS -->
           </tbody>
           <tfoot>
-            <!-- Summary Rows -->
+            <!-- Separate Summary Rows (No SL.NO) -->
             <tr class="row-summary row-net-amount">
-              <td class="col-sl" id="slNetAmount">9.</td>
+              <td class="col-sl"></td>
               <td class="col-particulars summary-title">Net Amount</td>
               <td class="col-cash text-right" id="totalCashDisplay">0.00</td>
               <td class="col-upi text-right" id="totalUpiDisplay">0.00</td>
@@ -153,12 +153,12 @@
               <td class="col-actions no-print"></td>
             </tr>
             <tr class="row-summary row-discount">
-              <td class="col-sl" id="slDiscount">10.</td>
+              <td class="col-sl"></td>
               <td class="col-particulars summary-title">Discount</td>
               <td class="col-cash"></td>
               <td class="col-upi"></td>
               <td class="col-amount">
-                <input type="number" id="discountInput" class="table-input text-right" placeholder="0" value="0" min="0"
+                <input type="number" id="discountInput" class="table-input text-right" placeholder="0" value="" min="0"
                   step="any">
               </td>
               <td class="col-remarks">
@@ -166,8 +166,22 @@
               </td>
               <td class="col-actions no-print"></td>
             </tr>
+            <tr class="row-summary row-advance">
+              <td class="col-sl"></td>
+              <td class="col-particulars summary-title">Advance Payment</td>
+              <td class="col-cash"></td>
+              <td class="col-upi"></td>
+              <td class="col-amount">
+                <input type="number" id="advanceInput" class="table-input text-right" placeholder="0" value="" min="0"
+                  step="any">
+              </td>
+              <td class="col-remarks">
+                <input type="text" id="advanceRemarks" class="table-input" placeholder="Receipt / Advance Remarks">
+              </td>
+              <td class="col-actions no-print"></td>
+            </tr>
             <tr class="row-summary row-total highlight-total">
-              <td class="col-sl" id="slTotal">11.</td>
+              <td class="col-sl"></td>
               <td class="col-particulars summary-title bold-title">Total</td>
               <td class="col-cash"></td>
               <td class="col-upi"></td>
