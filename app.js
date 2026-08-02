@@ -1,54 +1,100 @@
 /**
- * MIKKY MEGHA HOSPITAL - BILLING APP LOGIC
- * Global functions defined at top-level for 100% reliable execution.
+ * MIKKY MEGHA HOSPITAL - BILLING APP LOGIC (v2)
+ * New format: QTY × Price/Unit = Amount
+ * Two sections: (A) Hospital Charges, (B) Outside Charges
+ * Per-section add/delete rows
  */
 
-// Initial Default Particulars (Itemized charges)
-const DEFAULT_PARTICULARS = [
-  { name: "Package", cash: "", upi: "", amount: "", remarks: "" },
-  { name: "Medicine Bill", cash: "", upi: "", amount: "", remarks: "" },
-  { name: "Bed charge", cash: "", upi: "", amount: "", remarks: "" },
-  { name: "Investigation Reports", cash: "", upi: "", amount: "", remarks: "" },
-  { name: "Food Charge", cash: "", upi: "", amount: "", remarks: "" },
-  { name: "Doctor Charge", cash: "", upi: "", amount: "", remarks: "" },
-  { name: "Transport Charge", cash: "", upi: "", amount: "", remarks: "" },
-  { name: "OT / Equipment Charge", cash: "", upi: "", amount: "", remarks: "" },
-  { name: "Others Charge", cash: "", upi: "", amount: "", remarks: "" }
+// Section A: Hospital Charges (default items)
+const DEFAULT_HOSPITAL_CHARGES = [
+  { name: "BED CHARGE" },
+  { name: "OT CHARGE" },
+  { name: "ICU CHARGE" },
+  { name: "LIGATION" },
+  { name: "GLUCOMETRE" },
+  { name: "MONITORING" },
+  { name: "OXYGEN" },
+  { name: "GATHENAY CHARGE" },
+  { name: "SERVICE CHARGE" },
+  { name: "DRESSING" },
+  { name: "REGISTRATION CHARGE" },
+  { name: "LABOUR ROOM CHARGE" },
+  { name: "BLOOD TRANSFUSION DONE" },
+  { name: "DOCTOR VISIT" },
+  { name: "CBO" },
+  { name: "MEDICINE" },
+  { name: "R.M.O" }
 ];
 
-let particularsData = [];
+// Section B: Outside Charges (default items)
+const DEFAULT_OUTSIDE_CHARGES = [
+  { name: "SURGEON" },
+  { name: "CHILD DOCTOR" },
+  { name: "ANAESTHETIST" },
+  { name: "ASSISTANT" }
+];
+
+function createItem(name) {
+  return { name: name || "New Item", qty: "", priceUnit: "", amount: "" };
+}
+
+let hospitalCharges = [];
+let outsideCharges = [];
 
 /**
- * Reset all form fields & particulars table
+ * Reset all form fields & table
  */
 function resetForm() {
   const fields = [
-    "patientName", "ageSex", "contactNo", "patientId", 
-    "dateAdmission", "dateDischarge", "refDoctor", "stayDuration", 
-    "discountInput", "discountRemarks", "advanceInput", "advanceRemarks"
+    "billDateTop", "patientName", "patientAge", "underDoctor",
+    "noOfDays", "hospitalId", "caseType", "bedNo", "billDate",
+    "discountInput", "advanceInput"
   ];
   fields.forEach(id => {
     const el = document.getElementById(id);
     if (el) el.value = "";
   });
 
-  particularsData = DEFAULT_PARTICULARS.map(p => ({
-    name: p.name,
-    cash: "",
-    upi: "",
-    amount: "",
-    remarks: ""
-  }));
+  hospitalCharges = DEFAULT_HOSPITAL_CHARGES.map(p => createItem(p.name));
+  outsideCharges = DEFAULT_OUTSIDE_CHARGES.map(p => createItem(p.name));
 
-  renderParticulars();
+  renderAll();
 }
 
 /**
- * Add a new particular row
+ * Add new row to Hospital Charges (Section A)
  */
-function addNewRow() {
-  particularsData.push({ name: "New Item", cash: "", upi: "", amount: "", remarks: "" });
-  renderParticulars();
+function addHospitalRow() {
+  hospitalCharges.push(createItem("New Item"));
+  renderAll();
+}
+
+/**
+ * Add new row to Outside Charges (Section B)
+ */
+function addOutsideRow() {
+  outsideCharges.push(createItem("New Item"));
+  renderAll();
+}
+
+/**
+ * Delete row from Hospital Charges
+ */
+function deleteHospitalRow(index) {
+  if (index >= 0 && index < hospitalCharges.length) {
+    hospitalCharges.splice(index, 1);
+    renderAll();
+  }
+}
+
+/**
+ * Delete row from Outside Charges
+ */
+function deleteOutsideRow(index) {
+  if (index >= 0 && index < outsideCharges.length) {
+    outsideCharges.splice(index, 1);
+    renderAll();
+  }
 }
 
 /**
@@ -59,127 +105,157 @@ function printInvoice() {
 }
 
 /**
- * Delete specified row index
+ * Toggle whether the hospital header and outer page border print or not.
+ * When unchecked (default): header & outer border hidden (for pre-printed letterhead pad)
+ * When checked: header & outer border print (for plain paper)
  */
-function deleteRow(index) {
-  if (index >= 0 && index < particularsData.length) {
-    particularsData.splice(index, 1);
-    renderParticulars();
+function togglePrintHeader(checked) {
+  const billHeader = document.querySelector('.bill-header');
+  const billPaper = document.getElementById('billPaper');
+
+  if (checked) {
+    if (billHeader) billHeader.classList.remove('hide-header-print');
+    if (billPaper) billPaper.classList.remove('hide-border-print');
+  } else {
+    if (billHeader) billHeader.classList.add('hide-header-print');
+    if (billPaper) billPaper.classList.add('hide-border-print');
   }
 }
 
-// Bind functions to window scope immediately
+// Expose to window
 window.resetForm = resetForm;
-window.addNewRow = addNewRow;
+window.addHospitalRow = addHospitalRow;
+window.addOutsideRow = addOutsideRow;
+window.deleteHospitalRow = deleteHospitalRow;
+window.deleteOutsideRow = deleteOutsideRow;
 window.printInvoice = printInvoice;
-window.deleteRow = deleteRow;
+window.togglePrintHeader = togglePrintHeader;
 
 /**
- * Render table rows
+ * Render all table rows (both sections)
  */
-function renderParticulars() {
-  const particularsTbody = document.getElementById("particularsTbody");
-  if (!particularsTbody) return;
+function renderAll() {
+  const tbody = document.getElementById("billTbody");
+  if (!tbody) return;
 
-  particularsTbody.innerHTML = "";
+  tbody.innerHTML = "";
 
-  particularsData.forEach((item, index) => {
+  let globalSerial = 1;
+
+  // ---- Section A: Hospital Charges ----
+  // Section header row
+  const sectionAHeader = document.createElement("tr");
+  sectionAHeader.className = "section-header-row";
+  sectionAHeader.innerHTML = `
+    <td colspan="5" class="section-header-cell">(A) HOSPITAL CHARGES :-</td>
+    <td class="col-actions no-print section-header-cell">
+      <button class="btn-icon-add" onclick="addHospitalRow()" title="Add row to Hospital Charges">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+          <line x1="12" y1="5" x2="12" y2="19"></line>
+          <line x1="5" y1="12" x2="19" y2="12"></line>
+        </svg>
+      </button>
+    </td>
+  `;
+  tbody.appendChild(sectionAHeader);
+
+  // Section A data rows
+  hospitalCharges.forEach((item, index) => {
     const tr = document.createElement("tr");
+    tr.className = (globalSerial % 2 === 0) ? "data-row row-even" : "data-row row-odd";
 
     tr.innerHTML = `
-      <td class="col-sl">${index + 1}.</td>
-      <td class="col-particulars">
-        <input type="text" class="table-input input-name" data-index="${index}" value="${escapeHtml(item.name)}" placeholder="Item name">
+      <td class="col-sl">${globalSerial}</td>
+      <td class="col-description">
+        <input type="text" class="table-input input-name" data-section="hospital" data-index="${index}" value="${escapeHtml(item.name)}" placeholder="Item name">
       </td>
-      <td class="col-cash">
-        <input type="number" class="table-input text-right input-cash" data-index="${index}" value="${item.cash !== undefined ? item.cash : ''}" placeholder="0" min="0" step="any">
+      <td class="col-qty">
+        <input type="number" class="table-input text-right input-qty" data-section="hospital" data-index="${index}" value="${item.qty}" placeholder="" min="0" step="any">
       </td>
-      <td class="col-upi">
-        <input type="number" class="table-input text-right input-upi" data-index="${index}" value="${item.upi !== undefined ? item.upi : ''}" placeholder="0" min="0" step="any">
+      <td class="col-price">
+        <input type="number" class="table-input text-right input-price" data-section="hospital" data-index="${index}" value="${item.priceUnit}" placeholder="" min="0" step="any">
       </td>
       <td class="col-amount">
-        <input type="number" class="table-input text-right input-amount bold-amount" data-index="${index}" value="${item.amount !== undefined ? item.amount : ''}" placeholder="0" min="0" step="any">
-      </td>
-      <td class="col-remarks">
-        <input type="text" class="table-input input-remarks" data-index="${index}" value="${escapeHtml(item.remarks)}" placeholder="Remarks">
+        <input type="number" class="table-input text-right input-amount bold-amount" data-section="hospital" data-index="${index}" value="${item.amount}" placeholder="" min="0" step="any">
       </td>
       <td class="col-actions no-print">
-        <button class="btn-icon-danger btn-delete-row" onclick="deleteRow(${index})" title="Delete Row">
+        <button class="btn-icon-danger btn-delete-row" onclick="deleteHospitalRow(${index})" title="Delete Row">
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
         </button>
       </td>
     `;
 
-    particularsTbody.appendChild(tr);
+    tbody.appendChild(tr);
+    globalSerial++;
+  });
+
+  // ---- Section B: Outside Charges ----
+  const sectionBHeader = document.createElement("tr");
+  sectionBHeader.className = "section-header-row";
+  sectionBHeader.innerHTML = `
+    <td colspan="5" class="section-header-cell">(B) OUTSIDE CHARGES :-</td>
+    <td class="col-actions no-print section-header-cell">
+      <button class="btn-icon-add" onclick="addOutsideRow()" title="Add row to Outside Charges">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+          <line x1="12" y1="5" x2="12" y2="19"></line>
+          <line x1="5" y1="12" x2="19" y2="12"></line>
+        </svg>
+      </button>
+    </td>
+  `;
+  tbody.appendChild(sectionBHeader);
+
+  // Section B data rows
+  outsideCharges.forEach((item, index) => {
+    const tr = document.createElement("tr");
+    tr.className = (globalSerial % 2 === 0) ? "data-row row-even" : "data-row row-odd";
+
+    tr.innerHTML = `
+      <td class="col-sl">${globalSerial}</td>
+      <td class="col-description">
+        <input type="text" class="table-input input-name" data-section="outside" data-index="${index}" value="${escapeHtml(item.name)}" placeholder="Item name">
+      </td>
+      <td class="col-qty">
+        <input type="number" class="table-input text-right input-qty" data-section="outside" data-index="${index}" value="${item.qty}" placeholder="" min="0" step="any">
+      </td>
+      <td class="col-price">
+        <input type="number" class="table-input text-right input-price" data-section="outside" data-index="${index}" value="${item.priceUnit}" placeholder="" min="0" step="any">
+      </td>
+      <td class="col-amount">
+        <input type="number" class="table-input text-right input-amount bold-amount" data-section="outside" data-index="${index}" value="${item.amount}" placeholder="" min="0" step="any">
+      </td>
+      <td class="col-actions no-print">
+        <button class="btn-icon-danger btn-delete-row" onclick="deleteOutsideRow(${index})" title="Delete Row">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
+        </button>
+      </td>
+    `;
+
+    tbody.appendChild(tr);
+    globalSerial++;
   });
 
   calculateTotals();
 }
 
 /**
- * Calculate totals and update amount in words
- * Formula: Total Payable = Net Amount - Discount - Advance Payment
+ * Update row amount when qty or price changes
  */
-function calculateTotals() {
-  let totalCash = 0;
-  let totalUpi = 0;
-  let netAmount = 0;
+function updateRowAmount(section, index, fromQtyPrice) {
+  const data = section === "hospital" ? hospitalCharges : outsideCharges;
+  const row = data[index];
+  if (!row) return;
 
-  particularsData.forEach(item => {
-    const c = parseFloat(item.cash) || 0;
-    const u = parseFloat(item.upi) || 0;
-    let amt = parseFloat(item.amount);
-    
-    if (isNaN(amt)) {
-      amt = c + u;
-    }
-
-    totalCash += c;
-    totalUpi += u;
-    netAmount += amt;
-  });
-
-  const discountInput = document.getElementById("discountInput");
-  const advanceInput = document.getElementById("advanceInput");
-
-  const discount = parseFloat(discountInput ? discountInput.value : 0) || 0;
-  const advance = parseFloat(advanceInput ? advanceInput.value : 0) || 0;
-
-  // Final Total = Net Amount - Discount - Advance Payment
-  const grandTotal = Math.max(0, netAmount - discount - advance);
-
-  const totalCashDisplay = document.getElementById("totalCashDisplay");
-  const totalUpiDisplay = document.getElementById("totalUpiDisplay");
-  const netAmountDisplay = document.getElementById("netAmountDisplay");
-  const grandTotalDisplay = document.getElementById("grandTotalDisplay");
-  const amountInWords = document.getElementById("amountInWords");
-
-  if (totalCashDisplay) totalCashDisplay.textContent = totalCash > 0 ? totalCash.toFixed(2) : "0.00";
-  if (totalUpiDisplay) totalUpiDisplay.textContent = totalUpi > 0 ? totalUpi.toFixed(2) : "0.00";
-  if (netAmountDisplay) netAmountDisplay.textContent = netAmount.toFixed(2);
-  if (grandTotalDisplay) grandTotalDisplay.textContent = grandTotal.toFixed(2);
-
-  if (amountInWords) amountInWords.textContent = convertNumberToWords(grandTotal);
-}
-
-/**
- * Update row total when cash/upi changes
- */
-function updateRowTotal(index, fromCashUpi = false) {
-  const row = particularsData[index];
-  if (row) {
-    if (fromCashUpi) {
-      const c = parseFloat(row.cash) || 0;
-      const u = parseFloat(row.upi) || 0;
-      const totalVal = c + u;
-      row.amount = totalVal > 0 ? totalVal : "";
-      
-      const particularsTbody = document.getElementById("particularsTbody");
-      if (particularsTbody) {
-        const amountInput = particularsTbody.querySelector(`.input-amount[data-index="${index}"]`);
-        if (amountInput) {
-          amountInput.value = row.amount !== "" && row.amount !== undefined ? row.amount : "";
-        }
+  if (fromQtyPrice) {
+    const q = parseFloat(row.qty) || 0;
+    const p = parseFloat(row.priceUnit) || 0;
+    if (q > 0 && p > 0) {
+      row.amount = (q * p).toString();
+      // Update the amount input in DOM without re-rendering
+      const tbody = document.getElementById("billTbody");
+      if (tbody) {
+        const amountInput = tbody.querySelector(`.input-amount[data-section="${section}"][data-index="${index}"]`);
+        if (amountInput) amountInput.value = row.amount;
       }
     }
   }
@@ -187,42 +263,35 @@ function updateRowTotal(index, fromCashUpi = false) {
 }
 
 /**
- * Calculate hospital stay duration
+ * Calculate Sub Total, Discount, Advance Payment, Net Payable
  */
-function calculateHospitalStay() {
-  const dateAdmission = document.getElementById("dateAdmission");
-  const dateDischarge = document.getElementById("dateDischarge");
-  const stayDuration = document.getElementById("stayDuration");
+function calculateTotals() {
+  let subTotal = 0;
 
-  if (!dateAdmission || !dateDischarge || !stayDuration) return;
+  hospitalCharges.forEach(item => {
+    subTotal += parseFloat(item.amount) || 0;
+  });
 
-  const admStr = dateAdmission.value.trim();
-  const disStr = dateDischarge.value.trim();
+  outsideCharges.forEach(item => {
+    subTotal += parseFloat(item.amount) || 0;
+  });
 
-  if (!admStr || !disStr) return;
+  const discountEl = document.getElementById("discountInput");
+  const advanceEl = document.getElementById("advanceInput");
 
-  const parseDate = (str) => {
-    const parts = str.split(/[\/\.-]/);
-    if (parts.length === 3) {
-      let day = parseInt(parts[0], 10);
-      let month = parseInt(parts[1], 10) - 1;
-      let year = parseInt(parts[2], 10);
-      if (year < 100) year += 2000;
-      return new Date(year, month, day);
-    }
-    return null;
-  };
+  const discount = parseFloat(discountEl ? discountEl.value : 0) || 0;
+  const advance = parseFloat(advanceEl ? advanceEl.value : 0) || 0;
 
-  const admDate = parseDate(admStr);
-  const disDate = parseDate(disStr);
+  // Net Payable = Sub Total - Discount - Advance Payment
+  const netPayable = Math.max(0, subTotal - discount - advance);
 
-  if (admDate && disDate && !isNaN(admDate.getTime()) && !isNaN(disDate.getTime())) {
-    const diffTime = disDate - admDate;
-    const diffDays = Math.round(diffTime / (1000 * 60 * 60 * 24));
-    if (diffDays >= 0) {
-      stayDuration.value = `${diffDays + 1}Days`;
-    }
-  }
+  const subTotalDisplay = document.getElementById("subTotalDisplay");
+  const netPayableDisplay = document.getElementById("netPayableDisplay");
+  const amountInWords = document.getElementById("amountInWords");
+
+  if (subTotalDisplay) subTotalDisplay.textContent = subTotal > 0 ? subTotal : "0";
+  if (netPayableDisplay) netPayableDisplay.textContent = netPayable > 0 ? netPayable : "0";
+  if (amountInWords) amountInWords.textContent = convertNumberToWords(netPayable);
 }
 
 /**
@@ -300,46 +369,49 @@ function escapeHtml(text) {
 }
 
 /**
- * Initialize application logic
+ * Initialize application
  */
 function initApp() {
-  particularsData = JSON.parse(JSON.stringify(DEFAULT_PARTICULARS));
-  renderParticulars();
+  hospitalCharges = DEFAULT_HOSPITAL_CHARGES.map(p => createItem(p.name));
+  outsideCharges = DEFAULT_OUTSIDE_CHARGES.map(p => createItem(p.name));
+  renderAll();
 
-  const particularsTbody = document.getElementById("particularsTbody");
-  if (particularsTbody) {
-    particularsTbody.addEventListener("input", (e) => {
+  // Delegated event listener for all table inputs
+  const tbody = document.getElementById("billTbody");
+  if (tbody) {
+    tbody.addEventListener("input", (e) => {
+      const section = e.target.getAttribute("data-section");
       const index = parseInt(e.target.getAttribute("data-index"), 10);
-      if (isNaN(index)) return;
+      if (!section || isNaN(index)) return;
+
+      const data = section === "hospital" ? hospitalCharges : outsideCharges;
+      const row = data[index];
+      if (!row) return;
 
       if (e.target.classList.contains("input-name")) {
-        particularsData[index].name = e.target.value;
-        updateRowTotal(index, false);
-      } else if (e.target.classList.contains("input-cash")) {
-        particularsData[index].cash = e.target.value;
-        updateRowTotal(index, true);
-      } else if (e.target.classList.contains("input-upi")) {
-        particularsData[index].upi = e.target.value;
-        updateRowTotal(index, true);
+        row.name = e.target.value;
+      } else if (e.target.classList.contains("input-qty")) {
+        row.qty = e.target.value;
+        updateRowAmount(section, index, true);
+      } else if (e.target.classList.contains("input-price")) {
+        row.priceUnit = e.target.value;
+        updateRowAmount(section, index, true);
       } else if (e.target.classList.contains("input-amount")) {
-        particularsData[index].amount = e.target.value;
-        updateRowTotal(index, false);
-      } else if (e.target.classList.contains("input-remarks")) {
-        particularsData[index].remarks = e.target.value;
+        row.amount = e.target.value;
+        updateRowAmount(section, index, false);
       }
     });
   }
 
+  // Discount & Advance input listeners
   const discountInput = document.getElementById("discountInput");
   if (discountInput) discountInput.addEventListener("input", calculateTotals);
 
   const advanceInput = document.getElementById("advanceInput");
   if (advanceInput) advanceInput.addEventListener("input", calculateTotals);
 
-  const dateAdmission = document.getElementById("dateAdmission");
-  const dateDischarge = document.getElementById("dateDischarge");
-  if (dateAdmission) dateAdmission.addEventListener("input", calculateHospitalStay);
-  if (dateDischarge) dateDischarge.addEventListener("input", calculateHospitalStay);
+  // Default: header hidden during print (pre-printed pad mode)
+  togglePrintHeader(false);
 }
 
 if (document.readyState === "loading") {

@@ -10,8 +10,8 @@
   <link
     href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Cinzel:wght@700&display=swap"
     rel="stylesheet">
-  <link rel="stylesheet" href="style.css?v=10">
-  <script src="app.js?v=10" defer></script>
+  <link rel="stylesheet" href="style.css?v=20">
+  <script src="app.js?v=20" defer></script>
 </head>
 
 <body>
@@ -26,13 +26,12 @@
         </div>
       </div>
       <div class="header-actions">
-        <button id="btnAddRow" class="btn btn-outline" onclick="addNewRow()" title="Add a new custom row to table">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <line x1="12" y1="5" x2="12" y2="19"></line>
-            <line x1="5" y1="12" x2="19" y2="12"></line>
-          </svg>
-          Add Particular Item
-        </button>
+        <label class="toggle-label"
+          title="Enable to print hospital header. Disable if using pre-printed letterhead pad.">
+          <input type="checkbox" id="toggleHeader" onchange="togglePrintHeader(this.checked)">
+          <span class="toggle-slider"></span>
+          <span class="toggle-text">Print Header</span>
+        </label>
         <button id="btnReset" class="btn btn-danger-outline" onclick="resetForm()" title="Clear all input fields">
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
             <polyline points="1 4 1 10 7 10"></polyline>
@@ -61,65 +60,63 @@
 
       <!-- Hospital Official Header Section -->
       <div class="bill-header">
+        <div class="header-logo-wrapper">
+          <img src="logo.png" alt="Mikky Megha Hospital Logo" class="bill-logo">
+        </div>
         <div class="header-details-wrapper">
           <h2 class="hospital-name">Mikky Megha Hospital Pvt. Ltd.</h2>
-          <p class="hospital-address">Chhotparua, Karnajora, Raiganj, Uttar Dinajpur, PIN- 733130, West Bengal</p>
-          <p class="hospital-contact">
-            <span><strong>Contact No.:</strong> 8653870222</span>
-            <span class="contact-divider">|</span>
-            <span><strong>Email:</strong> hr.mikkymeghahospitals@gmail.com</span>
-          </p>
+          <p class="hospital-subtitle">Chhotparua, Karnajora, Raiganj, Uttar Dinajpur, PIN- 733130, West Bengal, MOB. :
+            8653870222</p>
         </div>
       </div>
 
+      <!-- Date Field (top right aligned) -->
+
       <!-- Bill Title Badge -->
       <div class="bill-badge-container">
-        <span class="bill-title-badge">[ HOSPITAL BILL ]</span>
+        <span class="bill-title-badge">[ BILL ]</span>
       </div>
 
       <!-- Patient Information Grid -->
       <div class="patient-info-box">
-        <div class="info-row row-patient-name">
+        <div class="info-row row-patient-age">
           <div class="info-field field-patient-name">
-            <span class="info-label">Name Of The Patient :</span>
+            <span class="info-label">RECEIVE WITH THANKS FOR PT. :</span>
             <input type="text" id="patientName" class="info-input input-bold" placeholder="Patient Full Name" value="">
           </div>
-          <div class="info-field field-age-sex">
-            <span class="info-label">Age/ Sex :</span>
-            <input type="text" id="ageSex" class="info-input" placeholder="e.g. 26/F" value="">
+          <div class="info-field field-age">
+            <span class="info-label">AGE :</span>
+            <input type="text" id="patientAge" class="info-input" placeholder="e.g. 62 Years" value="">
           </div>
         </div>
 
-        <div class="info-row row-contact-id">
-          <div class="info-field">
-            <span class="info-label">Patient Party Contact No :</span>
-            <input type="text" id="contactNo" class="info-input" placeholder="Contact Number" value="">
+        <div class="info-row row-doctor-id">
+          <div class="info-field field-doctor">
+            <span class="info-label">UNDER DOCTOR :</span>
+            <input type="text" id="underDoctor" class="info-input" placeholder="Doctor Name" value="">
           </div>
-          <div class="info-field">
-            <span class="info-label">Pt. Id :</span>
-            <input type="text" id="patientId" class="info-input" placeholder="Patient ID" value="">
+          <div class="info-field field-days">
+            <span class="info-label">NO. OF DAYS :</span>
+            <input type="text" id="noOfDays" class="info-input" placeholder="e.g. 4 Days" value="">
           </div>
-        </div>
-
-        <div class="info-row row-dates">
-          <div class="info-field">
-            <span class="info-label">Date Of Admission :</span>
-            <input type="text" id="dateAdmission" class="info-input" placeholder="DD/MM/YY" value="">
-          </div>
-          <div class="info-field">
-            <span class="info-label">Date Of Discharge :</span>
-            <input type="text" id="dateDischarge" class="info-input" placeholder="DD/MM/YY" value="">
+          <div class="info-field field-id">
+            <span class="info-label">MMH ID :</span>
+            <input type="text" id="hospitalId" class="info-input" placeholder="ID Number" value="">
           </div>
         </div>
 
-        <div class="info-row row-dr-stay">
-          <div class="info-field field-ref-dr">
-            <span class="info-label">Ref . Dr. Name :</span>
-            <input type="text" id="refDoctor" class="info-input" placeholder="Doctor Name" value="">
+        <div class="info-row row-case-bed-date">
+          <div class="info-field field-case">
+            <span class="info-label">CASE :</span>
+            <input type="text" id="caseType" class="info-input" placeholder="e.g. Medicine" value="">
           </div>
-          <div class="info-field">
-            <span class="info-label">Stay At Hospital :</span>
-            <input type="text" id="stayDuration" class="info-input" placeholder="Auto-calculated" value="">
+          <div class="info-field field-bed">
+            <span class="info-label">BED NO :</span>
+            <input type="text" id="bedNo" class="info-input" placeholder="Bed No." value="">
+          </div>
+          <div class="info-field field-billdate">
+            <span class="info-label">BILL DATE :</span>
+            <input type="text" id="billDate" class="info-input" placeholder="DD/MM/YYYY" value="">
           </div>
         </div>
       </div>
@@ -129,64 +126,60 @@
         <table class="bill-table" id="billTable">
           <thead>
             <tr>
-              <th class="col-sl">SL.NO.</th>
-              <th class="col-particulars">PARTICULARS</th>
-              <th class="col-cash">CASH</th>
-              <th class="col-upi">UPI</th>
-              <th class="col-amount">TOTAL AMOUNT(RS)</th>
-              <th class="col-remarks">REMARKS</th>
+              <th class="col-sl">SL NO</th>
+              <th class="col-description">DESCRIPTION</th>
+              <th class="col-qty">QTY</th>
+              <th class="col-price">PRICE/ UNIT</th>
+              <th class="col-amount">AMOUNT</th>
               <th class="col-actions no-print">ACTIONS</th>
             </tr>
           </thead>
-          <tbody id="particularsTbody">
+          <tbody id="billTbody">
             <!-- Dynamic rows rendered by JS -->
           </tbody>
           <tfoot>
-            <!-- Separate Summary Rows (No SL.NO) -->
-            <tr class="row-summary row-net-amount">
+            <!-- Sub Total Row -->
+            <tr class="row-summary row-subtotal">
               <td class="col-sl"></td>
-              <td class="col-particulars summary-title">Net Amount</td>
-              <td class="col-cash text-right" id="totalCashDisplay">0.00</td>
-              <td class="col-upi text-right" id="totalUpiDisplay">0.00</td>
-              <td class="col-amount text-right bold-amount" id="netAmountDisplay">0.00</td>
-              <td class="col-remarks"></td>
+              <td class="col-description summary-title bold-title">SUB TOTAL:</td>
+              <td class="col-qty"></td>
+              <td class="col-price"></td>
+              <td class="col-amount text-right final-total-amount" id="subTotalDisplay">0</td>
               <td class="col-actions no-print"></td>
             </tr>
+            <!-- Discount Row -->
             <tr class="row-summary row-discount">
               <td class="col-sl"></td>
-              <td class="col-particulars summary-title">Discount</td>
-              <td class="col-cash"></td>
-              <td class="col-upi"></td>
-              <td class="col-amount">
-                <input type="number" id="discountInput" class="table-input text-right" placeholder="0" value="" min="0"
-                  step="any">
+              <td class="col-description summary-title">
+                <span class="discount-badge-label">DISCOUNT:</span>
               </td>
-              <td class="col-remarks">
-                <input type="text" id="discountRemarks" class="table-input" placeholder="Remarks / Concession">
+              <td class="col-qty"></td>
+              <td class="col-price"></td>
+              <td class="col-amount">
+                <input type="number" id="discountInput" class="table-input text-right input-deduction" placeholder="0" min="0" step="any" value="">
               </td>
               <td class="col-actions no-print"></td>
             </tr>
+            <!-- Advance Payment Row -->
             <tr class="row-summary row-advance">
               <td class="col-sl"></td>
-              <td class="col-particulars summary-title">Advance Payment</td>
-              <td class="col-cash"></td>
-              <td class="col-upi"></td>
-              <td class="col-amount">
-                <input type="number" id="advanceInput" class="table-input text-right" placeholder="0" value="" min="0"
-                  step="any">
+              <td class="col-description summary-title">
+                <span class="advance-badge-label">ADVANCE PAYMENT:</span>
               </td>
-              <td class="col-remarks">
-                <input type="text" id="advanceRemarks" class="table-input" placeholder="Receipt / Advance Remarks">
+              <td class="col-qty"></td>
+              <td class="col-price"></td>
+              <td class="col-amount">
+                <input type="number" id="advanceInput" class="table-input text-right input-advance" placeholder="0" min="0" step="any" value="">
               </td>
               <td class="col-actions no-print"></td>
             </tr>
+            <!-- Net Payable Row -->
             <tr class="row-summary row-total highlight-total">
               <td class="col-sl"></td>
-              <td class="col-particulars summary-title bold-title">Total</td>
-              <td class="col-cash"></td>
-              <td class="col-upi"></td>
-              <td class="col-amount text-right final-total-amount" id="grandTotalDisplay">0.00</td>
-              <td class="col-remarks"></td>
+              <td class="col-description summary-title bold-title">NET PAYABLE (IN RS.):</td>
+              <td class="col-qty"></td>
+              <td class="col-price"></td>
+              <td class="col-amount text-right final-total-amount" id="netPayableDisplay">0</td>
               <td class="col-actions no-print"></td>
             </tr>
           </tfoot>
@@ -199,15 +192,15 @@
         <span class="words-value" id="amountInWords">Rupees Zero Only</span>
       </div>
 
-      <!-- Signatures Footer -->
+      <!-- Footer: Authorized Seal & Signatory -->
       <div class="signature-section">
-        <div class="signature-block">
-          <div class="signature-line"></div>
-          <p class="signature-label">Patient party sign.</p>
+        <div class="signature-block seal-block">
+          <div class="seal-placeholder"></div>
+          <p class="signature-label">AUTHORIZED SEAL & SIGNATORY</p>
         </div>
         <div class="signature-block text-right">
           <div class="signature-line"></div>
-          <p class="signature-label">Accountant sign.</p>
+          <p class="signature-label">Accountant Sign.</p>
         </div>
       </div>
 
