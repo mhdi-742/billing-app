@@ -263,7 +263,8 @@ body {
   justify-content: center;
   text-align: center;
   gap: 1rem;
-  padding-bottom: 0.5rem;
+  padding-top: 0.5cm;
+  padding-bottom: 0.5cm;
   margin-bottom: 0.35rem;
   margin-left: -1.1rem;
   margin-right: -1.1rem;
@@ -727,6 +728,8 @@ body {
 
   .bill-header {
     border-bottom: 2px solid #000000 !important;
+    padding-top: 0.5cm !important;
+    padding-bottom: 0.5cm !important;
   }
 
   /* Hide outer double border when printing on pre-printed letterhead pad */
