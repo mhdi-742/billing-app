@@ -26,9 +26,10 @@ const DEFAULT_ITEMS = [
   { name: "GLUCOMETRE" },
   { name: "A.B.G CHARGE" },
   { name: "TRANSPORT CHARGE" },
+  { name: "LIGATION" },
   { name: "" },
   { name: "" },
-  { name: "" },
+  { name: "" }
 ];
 
 function createItem(name) {
