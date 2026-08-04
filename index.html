@@ -131,7 +131,14 @@
               <th class="col-qty">QTY</th>
               <th class="col-price">PRICE/ UNIT</th>
               <th class="col-amount">AMOUNT</th>
-              <th class="col-actions no-print">ACTIONS</th>
+              <th class="col-actions no-print">
+                <button class="btn-icon-add" onclick="addRow()" title="Add Row">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                    <line x1="12" y1="5" x2="12" y2="19"></line>
+                    <line x1="5" y1="12" x2="19" y2="12"></line>
+                  </svg>
+                </button>
+              </th>
             </tr>
           </thead>
           <tbody id="billTbody">
@@ -194,6 +201,10 @@
 
       <!-- Footer: Authorized Seal & Signatory -->
       <div class="signature-section">
+        <div class="signature-block text-left">
+          <div class="signature-line"></div>
+          <p class="signature-label">Patient Party Sign.</p>
+        </div>
         <div class="signature-block seal-block">
           <div class="seal-placeholder"></div>
           <p class="signature-label">AUTHORIZED SEAL & SIGNATORY</p>
