@@ -183,13 +183,20 @@ function renderAll() {
 }
 
 /**
- * Render all dynamic discount rows
+ * Render all dynamic discount rows directly into tfoot after the discount header row.
+ * We cannot use a nested <tbody> inside <tfoot> — browsers reject invalid HTML and
+ * move those rows out of position. Instead we insert <tr> elements directly into tfoot.
  */
 function renderDiscounts() {
-  const dtbody = document.getElementById("discountTbody");
-  if (!dtbody) return;
+  const tfoot = document.querySelector("#billTable tfoot");
+  if (!tfoot) return;
 
-  dtbody.innerHTML = "";
+  // Remove all existing discount data rows
+  tfoot.querySelectorAll(".row-discount").forEach(r => r.remove());
+
+  // Find the header row to insert discount rows after it
+  const headerRow = tfoot.querySelector(".row-discount-header");
+  let insertAfter = headerRow || null;
 
   discountItems.forEach((item, index) => {
     const tr = document.createElement("tr");
@@ -214,7 +221,12 @@ function renderDiscounts() {
       </td>
     `;
 
-    dtbody.appendChild(tr);
+    if (insertAfter) {
+      insertAfter.insertAdjacentElement("afterend", tr);
+    } else {
+      tfoot.prepend(tr);
+    }
+    insertAfter = tr;
   });
 
   calculateTotals();
@@ -378,10 +390,10 @@ function initApp() {
     });
   }
 
-  // Delegated event listener for discount rows
-  const dtbody = document.getElementById("discountTbody");
-  if (dtbody) {
-    dtbody.addEventListener("input", (e) => {
+  // Delegated event listener for discount rows (on tfoot since rows are directly inside it)
+  const tfoot = document.querySelector("#billTable tfoot");
+  if (tfoot) {
+    tfoot.addEventListener("input", (e) => {
       const index = parseInt(e.target.getAttribute("data-di"), 10);
       if (isNaN(index) || !discountItems[index]) return;
 
