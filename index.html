@@ -154,19 +154,24 @@
               <td class="col-amount text-right final-total-amount" id="subTotalDisplay">0</td>
               <td class="col-actions no-print"></td>
             </tr>
-            <!-- Discount Row -->
-            <tr class="row-summary row-discount">
+            <!-- Dynamic Discount Rows Header -->
+            <tr class="row-summary row-discount-header">
               <td class="col-sl"></td>
-              <td class="col-description summary-title">
-                <span class="discount-badge-label">DISCOUNT:</span>
-              </td>
+              <td class="col-description summary-title discount-badge-label">DISCOUNT</td>
               <td class="col-qty"></td>
               <td class="col-price"></td>
-              <td class="col-amount">
-                <input type="number" id="discountInput" class="table-input text-right input-deduction" placeholder="0" min="0" step="any" value="">
+              <td class="col-amount"></td>
+              <td class="col-actions no-print">
+                <button class="btn-icon-add btn-add-discount" onclick="addDiscountRow()" title="Add Discount Row">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                    <line x1="12" y1="5" x2="12" y2="19"></line>
+                    <line x1="5" y1="12" x2="19" y2="12"></line>
+                  </svg>
+                </button>
               </td>
-              <td class="col-actions no-print"></td>
             </tr>
+            <!-- Dynamic Discount Rows (rendered by JS) -->
+            <tbody id="discountTbody"></tbody>
             <!-- Advance Payment Row -->
             <tr class="row-summary row-advance">
               <td class="col-sl"></td>

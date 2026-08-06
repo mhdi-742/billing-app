@@ -32,29 +32,16 @@ const DEFAULT_ITEMS = [
   { name: "" }
 ];
 
+function createDiscountItem() {
+  return { label: "DISCOUNT:", amount: "" };
+}
+
 function createItem(name) {
   return { name: name || "", qty: "", priceUnit: "", amount: "" };
 }
 
 let billItems = [];
-
-/**
- * Reset all form fields & table
- */
-function resetForm() {
-  const fields = [
-    "patientName", "patientAge", "underDoctor",
-    "noOfDays", "hospitalId", "caseType", "bedNo", "billDate",
-    "discountInput", "advanceInput"
-  ];
-  fields.forEach(id => {
-    const el = document.getElementById(id);
-    if (el) el.value = "";
-  });
-
-  billItems = DEFAULT_ITEMS.map(p => createItem(p.name));
-  renderAll();
-}
+let discountItems = [];
 
 /**
  * Add new row to bill items
@@ -73,6 +60,48 @@ function deleteRow(index) {
     renderAll();
   }
 }
+
+/**
+ * Reset all form fields & table
+ */
+function resetForm() {
+  const fields = [
+    "patientName", "patientAge", "underDoctor",
+    "noOfDays", "hospitalId", "caseType", "bedNo", "billDate",
+    "advanceInput"
+  ];
+  fields.forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.value = "";
+  });
+
+  billItems = DEFAULT_ITEMS.map(p => createItem(p.name));
+  discountItems = [createDiscountItem()];
+  renderAll();
+  renderDiscounts();
+}
+
+/**
+ * Add new discount row
+ */
+function addDiscountRow() {
+  discountItems.push(createDiscountItem());
+  renderDiscounts();
+}
+
+/**
+ * Delete a discount row
+ */
+function deleteDiscountRow(index) {
+  if (discountItems.length <= 1) {
+    // Keep at least one row — just clear it instead
+    discountItems[0] = createDiscountItem();
+  } else {
+    discountItems.splice(index, 1);
+  }
+  renderDiscounts();
+}
+
 
 /**
  * Print invoice
@@ -103,6 +132,8 @@ function togglePrintHeader(checked) {
 window.resetForm = resetForm;
 window.addRow = addRow;
 window.deleteRow = deleteRow;
+window.addDiscountRow = addDiscountRow;
+window.deleteDiscountRow = deleteDiscountRow;
 window.addHospitalRow = addRow;
 window.addOutsideRow = addRow;
 window.deleteHospitalRow = deleteRow;
@@ -152,8 +183,43 @@ function renderAll() {
 }
 
 /**
- * Update row amount when qty or price changes
+ * Render all dynamic discount rows
  */
+function renderDiscounts() {
+  const dtbody = document.getElementById("discountTbody");
+  if (!dtbody) return;
+
+  dtbody.innerHTML = "";
+
+  discountItems.forEach((item, index) => {
+    const tr = document.createElement("tr");
+    tr.className = "row-summary row-discount";
+
+    tr.innerHTML = `
+      <td class="col-sl"></td>
+      <td class="col-description">
+        <input type="text" class="table-input input-discount-label discount-badge-label"
+          data-di="${index}" value="${escapeHtml(item.label)}" placeholder="Discount label">
+      </td>
+      <td class="col-qty"></td>
+      <td class="col-price"></td>
+      <td class="col-amount">
+        <input type="number" class="table-input text-right input-deduction input-discount-amount"
+          data-di="${index}" value="${item.amount}" placeholder="0" min="0" step="any">
+      </td>
+      <td class="col-actions no-print">
+        <button class="btn-icon-danger btn-delete-row" onclick="deleteDiscountRow(${index})" title="Remove Discount">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2 2v2"></path></svg>
+        </button>
+      </td>
+    `;
+
+    dtbody.appendChild(tr);
+  });
+
+  calculateTotals();
+}
+
 function updateRowAmount(index, fromQtyPrice) {
   const row = billItems[index];
   if (!row) return;
@@ -183,14 +249,17 @@ function calculateTotals() {
     subTotal += parseFloat(item.amount) || 0;
   });
 
-  const discountEl = document.getElementById("discountInput");
-  const advanceEl = document.getElementById("advanceInput");
+  // Sum all discount rows
+  let totalDiscount = 0;
+  discountItems.forEach(d => {
+    totalDiscount += parseFloat(d.amount) || 0;
+  });
 
-  const discount = parseFloat(discountEl ? discountEl.value : 0) || 0;
+  const advanceEl = document.getElementById("advanceInput");
   const advance = parseFloat(advanceEl ? advanceEl.value : 0) || 0;
 
-  // Net Payable = Sub Total - Discount - Advance Payment
-  const netPayable = Math.max(0, subTotal - discount - advance);
+  // Net Payable = Sub Total - Total Discount - Advance Payment
+  const netPayable = Math.max(0, subTotal - totalDiscount - advance);
 
   const subTotalDisplay = document.getElementById("subTotalDisplay");
   const netPayableDisplay = document.getElementById("netPayableDisplay");
@@ -280,9 +349,11 @@ function escapeHtml(text) {
  */
 function initApp() {
   billItems = DEFAULT_ITEMS.map(p => createItem(p.name));
+  discountItems = [createDiscountItem()];
   renderAll();
+  renderDiscounts();
 
-  // Delegated event listener for all table inputs
+  // Delegated event listener for all bill table inputs
   const tbody = document.getElementById("billTbody");
   if (tbody) {
     tbody.addEventListener("input", (e) => {
@@ -307,10 +378,23 @@ function initApp() {
     });
   }
 
-  // Discount & Advance input listeners
-  const discountInput = document.getElementById("discountInput");
-  if (discountInput) discountInput.addEventListener("input", calculateTotals);
+  // Delegated event listener for discount rows
+  const dtbody = document.getElementById("discountTbody");
+  if (dtbody) {
+    dtbody.addEventListener("input", (e) => {
+      const index = parseInt(e.target.getAttribute("data-di"), 10);
+      if (isNaN(index) || !discountItems[index]) return;
 
+      if (e.target.classList.contains("input-discount-label")) {
+        discountItems[index].label = e.target.value;
+      } else if (e.target.classList.contains("input-discount-amount")) {
+        discountItems[index].amount = e.target.value;
+        calculateTotals();
+      }
+    });
+  }
+
+  // Advance input listener
   const advanceInput = document.getElementById("advanceInput");
   if (advanceInput) advanceInput.addEventListener("input", calculateTotals);
 
